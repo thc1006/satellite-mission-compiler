@@ -1,6 +1,36 @@
 # Changelog
 
-## v0.2.0 (unreleased)
+## v0.3.0 (2026-04-05)
+
+Tagged release used as the reference artifact for the IEEE SMC-IT/SCC 2026
+paper submission (DOI: 10.5281/zenodo.19391965).
+
+### Features
+- Real GPU DRA (Dynamic Resource Allocation) experiments: live K8s 1.35 +
+  Argo v4.0.1 + Kueue v0.17.0 validation with NVIDIA RTX 5080 against
+  `gpu.nvidia.com` DeviceClass.
+- Ablation harness (`scripts/ablation_study.py`) producing schema-only,
+  policy-only, and combined detection rates across 12 error categories.
+- Phase-wise scaling benchmark (`scripts/benchmark_scaling.py`) covering
+  parse, OPA, compile, Argo render, and Kueue render at 10–1000 events.
+
+### Testing
+- 422 tests across 34 modules (419 passing, 3 skipped pending live cluster
+  in author's local environment; 394 passing, 28 skipped in fresh
+  environments without OPA binary, k3s, and Argo CLI installed).
+- 13 golden translation evaluations comparing rendered IR against
+  expected JSON.
+
+### Documentation
+- Traceability matrix mapping each schema field, Rego rule, and rendered
+  artifact back to ORCHIDE slide references.
+- Architecture documentation aligned with paper §III.
+
+## v0.2.1 (2026-04-03)
+
+Patch release on top of v0.2.0 — see git log for details.
+
+## v0.2.0 (2026-04-03)
 
 ### Security
 - **S-H1**: MCP tools now validate file paths — reject traversal, absolute paths, directory components (CWE-22)
