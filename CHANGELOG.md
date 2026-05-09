@@ -28,7 +28,16 @@ paper submission (DOI: 10.5281/zenodo.19391965).
 
 ## v0.2.1 (2026-04-03)
 
-Patch release on top of v0.2.0 — see git log for details.
+### Features
+- MCP tool expansion: `diff_plans` (structural diff between two mission
+  plans) and `check_timeline_conflicts` (interval overlap detection).
+
+### Code quality
+- `cli.py` coverage 67% → 99%; total coverage 78% → 84%.
+
+### Documentation
+- README counts updated (155 tests, 6 MCP tools at the time).
+- Added EUPL-1.2 license badge.
 
 ## v0.2.0 (2026-04-03)
 

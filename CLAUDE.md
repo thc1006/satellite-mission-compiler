@@ -72,7 +72,7 @@ For live validation changes:
 
 This repo is developed against a host-resident kubeadm K8s cluster
 (NOT kind/minikube/k3s). The cluster runs as a systemd kubelet on the
-dev box (`thc1006-l340`) and was set up with Cilium CNI, Multus
+dev box (`<dev-host>`) and was set up with Cilium CNI, Multus
 secondary CNI, NVIDIA DRA driver, and DRA-aware feature gates.
 Reproduction recipe and known issues are documented in
 `docs/local-dev-troubleshooting.md`.
@@ -80,15 +80,21 @@ Reproduction recipe and known issues are documented in
 ### Standard environment setup
 
 ```bash
-# 1. kubeconfig (root-owned by default; copy to user-readable temp path)
-sudo cp /etc/kubernetes/admin.conf /tmp/kubeconfig-host
-sudo chmod a+r /tmp/kubeconfig-host
+# 1. kubeconfig — root-owned by default; copy to a user-private path.
+#    Note: /tmp is wiped on reboot. For a persistent path use
+#    ~/.kube/satellite-mission-compiler-config and update KUBECONFIG accordingly.
+sudo install -m 0600 -o "$USER" -g "$USER" \
+  /etc/kubernetes/admin.conf /tmp/kubeconfig-host
 export KUBECONFIG=/tmp/kubeconfig-host
-kubectl get nodes  # expect: thc1006-l340 Ready, control-plane, v1.35.x
+kubectl get nodes  # expect: <dev-host> Ready, control-plane, v1.35.x
 
 # 2. Python venv (project deps + dev tools + MCP)
+#    uv path (faster, optional — see docs/07_installation_matrix.md):
 uv venv .venv-verify --python 3.12
 uv pip install --python .venv-verify/bin/python -e '.[dev,mcp]'
+#    Or pure stdlib + pip equivalent:
+#    python3 -m venv .venv-verify
+#    .venv-verify/bin/python -m pip install -e '.[dev,mcp]'
 
 # 3. CLI tools (one-time, place in venv bin)
 curl -sSL -o .venv-verify/bin/argo.gz \
@@ -150,10 +156,14 @@ KUBECONFIG=/tmp/kubeconfig-host kubectl delete pod -n kube-system -l app=multus
 
 ### Operator constraints
 
-- The host runs Tailscale; user accesses the box remotely via it.
-  **Never** run `sudo tailscale down` or `systemctl stop tailscaled` —
-  cuts the SSH session. Use `sudo tailscale set --accept-dns=false`
-  for DNS-only adjustments.
+- **If the operator is remoting into this box via Tailscale**: never run
+  `sudo tailscale down` or `systemctl stop tailscaled` — that severs
+  the SSH session and may require physical/console access to recover.
+  For DNS-only experiments use `sudo tailscale set --accept-dns=false`
+  (revertable with `--accept-dns=true`); for iptables-only experiments
+  use `--netfilter-mode=off` (revertable to `=on`). The reason these
+  matter on this host: the operator's incoming SSH path **is** the
+  Tailscale tunnel, so any change that drops the tunnel drops access.
 - Do NOT install kind, k3s, or minikube on this host. Port 6443 is
   already owned by the host kubeadm cluster, and Multus shim is
   configured for the host network namespace; sibling installs cause

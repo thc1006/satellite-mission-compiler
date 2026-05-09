@@ -1,8 +1,12 @@
 # Local Development Troubleshooting
 
+> **Last verified: 2026-05-09.** Re-verify against current CNI / Argo /
+> Kueue / kernel versions before relying on these recipes verbatim.
+
 This file documents real failures encountered while reproducing paper
-§V-D's live cluster experiments on the dev host (`thc1006-l340`,
-Ubuntu 24.04, kernel 6.17, Docker 29.4) and their resolutions.
+§V-D's live cluster experiments on a dev host (Ubuntu 24.04, kernel 6.17,
+Docker 29.4, hostname referred to throughout as `<dev-host>`) and their
+resolutions. Adjust the hostname to match your machine.
 
 ## TL;DR — paper §V-D reproducibility recipe
 
@@ -11,8 +15,8 @@ Ubuntu 24.04, kernel 6.17, Docker 29.4) and their resolutions.
 sudo mkdir -p /var/lib/cni/multus && sudo chmod 755 /var/lib/cni/multus
 
 # 2. Use the existing host kubeadm cluster (NOT kind/k3s; see §B)
-sudo cp /etc/kubernetes/admin.conf /tmp/kubeconfig-host
-sudo chmod a+r /tmp/kubeconfig-host
+sudo install -m 0600 -o "$USER" -g "$USER" \
+  /etc/kubernetes/admin.conf /tmp/kubeconfig-host
 export KUBECONFIG=/tmp/kubeconfig-host
 
 # 3. Install Argo + Kueue with --server-side (see §C)
@@ -92,7 +96,7 @@ namespace, not Docker's.
 
 ### Root cause
 
-The host `thc1006-l340` runs a full **kubeadm K8s v1.35.4 control plane
+The host `<dev-host>` runs a full **kubeadm K8s v1.35.4 control plane
 as a systemd service** (`kubelet.service`). This is the cluster used for
 paper §V-D's RTX 5080 experiments. It owns port 6443 and configures
 Multus globally on the host.
@@ -104,8 +108,8 @@ same host.
 
 ```bash
 # kubeadm admin kubeconfig (root-owned by default)
-sudo cp /etc/kubernetes/admin.conf /tmp/kubeconfig-host
-sudo chmod a+r /tmp/kubeconfig-host
+sudo install -m 0600 -o "$USER" -g "$USER" \
+  /etc/kubernetes/admin.conf /tmp/kubeconfig-host
 export KUBECONFIG=/tmp/kubeconfig-host
 kubectl get nodes  # thc1006-l340 Ready, control-plane, v1.35.4
 kubectl get deviceclasses  # gpu.nvidia.com, mig.nvidia.com (DRA enabled)
@@ -183,7 +187,8 @@ KUBECONFIG=/tmp/kubeconfig-host bash scripts/validate_live_cluster.sh
 
 ## §E. Tailscale considerations (not actually a problem, FYI)
 
-The host runs Tailscale. Two prefs may show up in pod environments:
+If the host runs Tailscale, two prefs may show up in pod environments
+without causing the §A symptom:
 
 - `CorpDNS: true` injects `tail*.ts.net` search domain into pod
   `/etc/resolv.conf`. Harmless; does not cause TLS failures.
@@ -199,8 +204,11 @@ sudo tailscale set --accept-dns=false   # disable DNS injection only
 sudo tailscale set --accept-dns=true
 ```
 
-**Never** run `sudo tailscale down` on this host — it cuts the operator's
-SSH access via Tailscale and can require physical/console intervention.
+**Operator caution**: if you reach the dev host **through** Tailscale
+(SSH over the tailnet), running `sudo tailscale down` or
+`systemctl stop tailscaled` cuts your own session and may require
+physical/console access to recover. Prefer the per-pref toggles above
+for any diagnostic that touches Tailscale.
 
 ---
 

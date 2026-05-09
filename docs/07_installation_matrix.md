@@ -14,6 +14,7 @@
 | Hera | `hera-workflows` | https://pypi.org/project/hera-workflows/ | **6.0.0** | `pip install hera-workflows==6.0.0` | Python only | **Removed from default deps** — was unused; re-add when Hera-based rendering is implemented |
 | Ruff | `ruff` | https://docs.astral.sh/ruff/ ; https://github.com/astral-sh/ruff/releases | **0.15.8** | `pip install ruff==0.15.8` | Python toolchain | none known here |
 | pytest | `pytest` | https://docs.pytest.org/en/stable/announce/release-9.0.2.html | **9.0.2** | `pip install pytest==9.0.2` | Python toolchain | plugin compatibility may vary |
+| uv (optional) | `uv` | https://docs.astral.sh/uv/ ; https://github.com/astral-sh/uv/releases | latest stable | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | Linux/macOS/Windows | Fast venv + installer; substitutable with stdlib `python3 -m venv` + `pip install` |
 | FastMCP (optional) | `fastmcp` | https://gofastmcp.com/getting-started/installation | **3.2.0** | `pip install fastmcp==3.2.0` | Python only | optional extra; not required for core compiler |
 | mypy | `mypy` | https://mypy.readthedocs.io/ ; https://github.com/python/mypy/releases | **1.16.0** | `pip install mypy==1.16.0` | Python toolchain | static type checker; dev dependency only |
 | types-PyYAML | `types-PyYAML` | https://pypi.org/project/types-PyYAML/ | **6.0.12.20250915** | `pip install types-PyYAML==6.0.12.20250915` | Python toolchain | type stubs for PyYAML; dev dependency only |
