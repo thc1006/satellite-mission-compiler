@@ -111,7 +111,7 @@ same host.
 sudo install -m 0600 -o "$USER" -g "$USER" \
   /etc/kubernetes/admin.conf /tmp/kubeconfig-host
 export KUBECONFIG=/tmp/kubeconfig-host
-kubectl get nodes  # thc1006-l340 Ready, control-plane, v1.35.4
+kubectl get nodes  # expect: <dev-host> Ready, control-plane, v1.35.x
 kubectl get deviceclasses  # gpu.nvidia.com, mig.nvidia.com (DRA enabled)
 ```
 
