@@ -27,4 +27,7 @@ out/
 
 # Paper drafts (local only)
 paper/
+
+# Claude Code local-only state
 .claude/worktrees/
+.claude/settings.local.json

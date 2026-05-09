@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "Satellite Mission Compiler"
+version: "0.3.0"
+date-released: "2026-04-05"
+url: "https://github.com/thc1006/satellite-mission-compiler"
+repository-code: "https://github.com/thc1006/satellite-mission-compiler"
+license: "EUPL-1.2"
+doi: "10.5281/zenodo.19391965"
+type: software
+keywords:
+  - satellite
+  - mission-planning
+  - cloud-native
+  - argo-workflows
+  - kueue
+  - opa
+  - rego
+  - policy-as-code
+  - orchide
+authors:
+  - family-names: "Tsai"
+    given-names: "Hsiu-Chi"
+    affiliation: "National Yang Ming Chiao Tung University"
+  - family-names: "Chung"
+    given-names: "Chia-Tung"
+    affiliation: "National Yang Ming Chiao Tung University"
+preferred-citation:
+  type: conference-paper
+  title: "Satellite Mission Compiler: Ground-Side Schema Validation, Policy-as-Code, and Workflow Artifact Rendering for Onboard AI Platforms"
+  authors:
+    - family-names: "Tsai"
+      given-names: "Hsiu-Chi"
+      affiliation: "National Yang Ming Chiao Tung University"
+    - family-names: "Chung"
+      given-names: "Chia-Tung"
+      affiliation: "National Yang Ming Chiao Tung University"
+  year: 2026
+  conference:
+    name: "IEEE Space Mission Challenges for Information Technology / Space Computing Conference (SMC-IT/SCC)"
+    city: "Pasadena"
+    region: "CA"
+    country: "US"
