@@ -27,7 +27,7 @@ authors:
     affiliation: "National Yang Ming Chiao Tung University"
 preferred-citation:
   type: conference-paper
-  title: "Satellite Mission Compiler: Ground-Side Schema Validation, Policy-as-Code, and Workflow Artifact Rendering for Onboard AI Platforms"
+  title: "Ground-Side Mission Plan Compilation with Policy-as-Code Guardrails for Cloud-Native Satellite Platforms"
   authors:
     - family-names: "Tsai"
       given-names: "Hsiu-Chi"
@@ -36,8 +36,14 @@ preferred-citation:
       given-names: "Chia-Tung"
       affiliation: "National Yang Ming Chiao Tung University"
   year: 2026
+  month: 8
+  publisher:
+    name: "IEEE"
   conference:
     name: "IEEE Space Mission Challenges for Information Technology / Space Computing Conference (SMC-IT/SCC)"
     city: "Pasadena"
     region: "CA"
     country: "US"
+    date-start: "2026-08-03"
+    date-end: "2026-08-06"
+  notes: "Accepted 2026-05-27; to appear in the proceedings. Update with IEEE Xplore DOI and page numbers after publication."
