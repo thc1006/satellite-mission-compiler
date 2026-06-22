@@ -1,12 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the paper."
 title: "Satellite Mission Compiler"
-version: "0.4.0"
+version: "0.4.1"
 date-released: "2026-06-16"
 url: "https://github.com/thc1006/satellite-mission-compiler"
 repository-code: "https://github.com/thc1006/satellite-mission-compiler"
 license: "EUPL-1.2"
-doi: "10.5281/zenodo.20801470"
+doi: "10.5281/zenodo.19389694"
 type: software
 keywords:
   - satellite

@@ -3,7 +3,7 @@
 A ground-side, cloud-native mission plan compiler for satellite operations. Validates structured mission plans, applies OPA/Rego policy guardrails, and renders admission-ready Argo Workflow and Kueue Job artifacts before anything reaches an onboard orchestrator.
 
 [![CI](https://github.com/thc1006/satellite-mission-compiler/actions/workflows/ci.yml/badge.svg)](https://github.com/thc1006/satellite-mission-compiler/actions/workflows/ci.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20801470.svg)](https://doi.org/10.5281/zenodo.20801470)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19389694.svg)](https://doi.org/10.5281/zenodo.19389694)
 ![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue)](LICENSE)
 
@@ -134,7 +134,7 @@ If you use this project in academic work, please cite:
 ```bibtex
 @software{satellite_mission_compiler,
   title     = {Satellite Mission Compiler},
-  doi       = {10.5281/zenodo.20801470},
+  doi       = {10.5281/zenodo.19389694},
   url       = {https://github.com/thc1006/satellite-mission-compiler},
   publisher = {Zenodo},
   year      = {2026}

@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.4.1 (2026-06-16)
+
+Camera-ready metadata sync. Same code surface as v0.4.0, but
+CITATION.cff / README / pyproject.toml internally consistent with the
+v0.4.1 version label. Repo metadata now references the Zenodo
+**concept DOI** (10.5281/zenodo.19389694) which always resolves to the
+latest published version. The paper itself cites the version-specific
+DOI for this release (assigned by Zenodo at deposit time).
+
+### Why a patch release
+v0.4.0 archive contained `version: "0.3.0"` strings inside CITATION.cff
+and pyproject.toml because those files were synced AFTER the v0.4.0 tag.
+v0.4.1 closes that gap so the deposited archive is metadata-consistent.
+
 ## v0.4.0 (2026-06-16)
 
 Camera-ready release for the IEEE SMC-IT/SCC 2026 paper. DOI:
