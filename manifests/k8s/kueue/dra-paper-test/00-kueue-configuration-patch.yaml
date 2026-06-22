@@ -1,0 +1,89 @@
+# =========================================================================
+# Kueue Configuration patch — adds deviceClassMappings for DRA Template Path
+# =========================================================================
+#
+# Verified end-to-end on 2026-06-09 against:
+#   * Kueue v0.17.3 (https://github.com/kubernetes-sigs/kueue/releases/tag/v0.17.3)
+#   * K8s v1.36.1 (kubeadm)
+#   * NVIDIA DRA driver, NVIDIA GeForce GT 1030
+#
+# Apply order (the full reproducibility set):
+#   1. THIS FILE (00-kueue-configuration-patch.yaml)
+#      → After applying, restart the controller:
+#        kubectl rollout restart deployment/kueue-controller-manager -n kueue-system
+#      → Then ensure the deployment args include BOTH feature gates:
+#        --feature-gates=DRAExtendedResources=true,DynamicResourceAllocation=true
+#        (set via deployment patch; cannot also be set in this ConfigMap or
+#         Kueue refuses to start with "feature gates for CLI and configuration
+#         cannot both specified")
+#   2. 01-namespace-and-queue.yaml
+#   3. 02-resourceclaimtemplate.yaml
+#   4. 03-jobs.yaml
+#
+# Verified upstream field names (apis/config/v1beta2/configuration_types.go
+# at tag v0.17.3 and v0.18.0):
+#   resources.deviceClassMappings[*].name              corev1.ResourceName
+#   resources.deviceClassMappings[*].deviceClassNames  []corev1.ResourceName (PLURAL ARRAY)
+#
+# IMPORTANT — this ConfigMap REPLACES the existing kueue-manager-config.
+# Back up your current ConfigMap before applying:
+#   kubectl get cm -n kueue-system kueue-manager-config -o yaml > ~/kueue-config-backup.yaml
+#
+# IMPORTANT — feature-gate location: in v0.17.3 you MUST pass the gates via
+# the deployment args, NOT in `featureGates:` block of this ConfigMap.
+# Putting both causes "feature gates for CLI and configuration cannot both
+# specified" and the controller refuses to start.
+# =========================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kueue-manager-config
+  namespace: kueue-system
+data:
+  controller_manager_config.yaml: |
+    apiVersion: config.kueue.x-k8s.io/v1beta2
+    kind: Configuration
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: :8443
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: c1f6bfd2.kueue.x-k8s.io
+    controller:
+      groupKindConcurrency:
+        Job.batch: 5
+        Pod: 5
+        Workload.kueue.x-k8s.io: 5
+        LocalQueue.kueue.x-k8s.io: 1
+        Cohort.kueue.x-k8s.io: 1
+        ClusterQueue.kueue.x-k8s.io: 1
+        ResourceFlavor.kueue.x-k8s.io: 1
+    clientConnection:
+      qps: 50
+      burst: 100
+    integrations:
+      frameworks:
+      - "batch/job"
+      - "kubeflow.org/mpijob"
+      - "ray.io/rayjob"
+      - "ray.io/raycluster"
+      - "ray.io/rayservice"
+      - "jobset.x-k8s.io/jobset"
+      - "kubeflow.org/paddlejob"
+      - "kubeflow.org/pytorchjob"
+      - "kubeflow.org/tfjob"
+      - "kubeflow.org/xgboostjob"
+      - "kubeflow.org/jaxjob"
+      - "workload.codeflare.dev/appwrapper"
+      - "trainer.kubeflow.org/trainjob"
+    # Maps the DRA DeviceClass `gpu.nvidia.com` (created by the NVIDIA DRA
+    # driver) to a logical resource name `dra.gpu.nvidia.com` that
+    # ClusterQueue can reference in `coveredResources`.
+    resources:
+      deviceClassMappings:
+      - name: dra.gpu.nvidia.com
+        deviceClassNames:
+        - gpu.nvidia.com

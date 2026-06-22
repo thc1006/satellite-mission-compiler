@@ -1,0 +1,25 @@
+# =========================================================================
+# ResourceClaimTemplate: explicit DRA Template Path (resource.k8s.io/v1)
+# =========================================================================
+# Each Job's Pod references this template via spec.resourceClaims; for each
+# Pod K8s instantiates a fresh ResourceClaim that the NVIDIA DRA driver
+# allocates against a gpu.nvidia.com DeviceClass device on the node.
+#
+# Kueue v0.17.3 with DynamicResourceAllocation feature gate enabled
+# AUTOMATICALLY counts these claims against the ClusterQueue quota for
+# the resource name `dra.gpu.nvidia.com` (per deviceClassMappings in
+# 00-kueue-configuration-patch.yaml).
+# =========================================================================
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaimTemplate
+metadata:
+  name: single-gpu
+  namespace: dra-paper-test
+spec:
+  spec:
+    devices:
+      requests:
+      - name: gpu
+        exactly:
+          deviceClassName: gpu.nvidia.com
+          count: 1

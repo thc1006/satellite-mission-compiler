@@ -1,0 +1,50 @@
+# =========================================================================
+# Namespace + ResourceFlavor + ClusterQueue + LocalQueue for DRA quota test
+# =========================================================================
+# Verified working end-to-end 2026-06-09 with Kueue v0.17.3 + GT 1030 +
+# the Configuration patch in 00-kueue-configuration-patch.yaml.
+# =========================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dra-paper-test
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: dra-paper-flavor
+---
+# ClusterQueue: covers cpu, memory, AND the logical resource name
+# `dra.gpu.nvidia.com` that the Configuration's deviceClassMappings binds
+# to the DRA DeviceClass gpu.nvidia.com. nominalQuota for the GPU is 1
+# so two simultaneous jobs each requesting 1 GPU enter contention.
+#
+# IMPORTANT: ClusterQueue MUST also cover cpu+memory or Workload admission
+# fails with "couldn't assign flavors to pod set main: resource cpu
+# unavailable in ClusterQueue". Without these, even DRA-quota-compliant
+# Jobs are stuck Suspended forever.
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: dra-paper-cq
+spec:
+  namespaceSelector: {}
+  resourceGroups:
+  - coveredResources: ["cpu", "memory", "dra.gpu.nvidia.com"]
+    flavors:
+    - name: dra-paper-flavor
+      resources:
+      - name: cpu
+        nominalQuota: "4"
+      - name: memory
+        nominalQuota: "4Gi"
+      - name: dra.gpu.nvidia.com
+        nominalQuota: "1"
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: LocalQueue
+metadata:
+  name: dra-paper-lq
+  namespace: dra-paper-test
+spec:
+  clusterQueue: dra-paper-cq

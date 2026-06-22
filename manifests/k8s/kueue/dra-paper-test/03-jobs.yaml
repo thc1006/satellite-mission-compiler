@@ -1,0 +1,76 @@
+# =========================================================================
+# Two Jobs each requesting 1 GPU via DRA ResourceClaimTemplate
+# =========================================================================
+# Quota=1 means Kueue admits 1 Job, suspends the other. When the first
+# Job finishes, Kueue auto-admits the suspended Job (cascade).
+#
+# Verified outcome 2026-06-09 (Kueue v0.17.3, GT 1030):
+#   t=0    submit both → both Suspended, pending=2 admitted=0
+#   t≈10s  Kueue admits one → pending=1 admitted=1 (job-1 Running)
+#   t≈40s  job-1 Complete 1/1
+#   t≈45s  Kueue auto-admits the other (cascade gap ≈ 5s) →
+#          ResourceClaim job-2-...-gpu-... state=allocated,reserved
+#   t≈75s  job-2 Complete 1/1
+#
+# Container: agnhost (no GPU usage). The experiment validates DRA-QUOTA
+# arithmetic + cascade, not GPU compute.
+# =========================================================================
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dra-paper-job-1
+  namespace: dra-paper-test
+  labels:
+    kueue.x-k8s.io/queue-name: dra-paper-lq
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: gpu
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        command: ["/bin/sh", "-c"]
+        args:
+          - 'echo "job-1 starting at $(date)"; sleep 30; echo "job-1 done at $(date)"'
+        resources:
+          claims:
+          - name: gpu
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+      resourceClaims:
+      - name: gpu
+        resourceClaimTemplateName: single-gpu
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dra-paper-job-2
+  namespace: dra-paper-test
+  labels:
+    kueue.x-k8s.io/queue-name: dra-paper-lq
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: gpu
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        command: ["/bin/sh", "-c"]
+        args:
+          - 'echo "job-2 starting at $(date)"; sleep 30; echo "job-2 done at $(date)"'
+        resources:
+          claims:
+          - name: gpu
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+      resourceClaims:
+      - name: gpu
+        resourceClaimTemplateName: single-gpu
