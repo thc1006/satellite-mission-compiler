@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.4.0 (2026-06-16)
+
+Camera-ready release for the IEEE SMC-IT/SCC 2026 paper. DOI:
+10.5281/zenodo.20801470.
+
+### Added
+- `manifests/k8s/kueue/dra-paper-test/` reproducibility set (6 files)
+  for the §V-E DRA Quota Cascade experiment: Kueue Configuration
+  patch, ClusterQueue+LocalQueue+ResourceFlavor, ResourceClaimTemplate,
+  two-Job test workload, README with apply order and rollback.
+- `docs/experiments/2026-06-09-dra-quota-cascade-output.md` — captured
+  live-cluster output (host kubeadm K8s v1.36.1 + Kueue v0.17.3 + NVIDIA
+  DRA driver + NVIDIA GeForce GT 1030 single-GPU node).
+
+### Notes
+- v0.3.0 (the prior tag) is preserved as the §V-D RTX 5080 reference
+  point. v0.4.0 adds the §V-E GT 1030 cascade artifacts on top.
+
 ## v0.3.0 (2026-04-05)
 
 Tagged release used as the reference artifact for the IEEE SMC-IT/SCC 2026
